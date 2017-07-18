@@ -56,17 +56,6 @@ taskSchema.pre('save', function(next){
 });
 
 var Task = mongoose.model('task', taskSchema);
-// var task_01 = new Task({
-// 	id: 0,
-// 	title: 'task01',
-// 	description: 'task01_desc'
-// });
-// task_01.save(function(err, data){
-// 	if(err) {
-// 		console.log(err);
-// 	}
-// 	console.log(data);
-// })
 
 //App
 app.listen(3000);
@@ -126,21 +115,46 @@ app.post('/upload', urlencodedParser, function(req, res){
 
 app.get('/remove/:id', function (req,res){
 	var removeId = req.params.id;
-	var removeTask;
+	var removeTask
 	Task.findOne({id:removeId}, function(err, task){
 		if(err){
 			console.log(err);
 		}
-		removeTask = task;
+		removeTask = task
 		console.log(removeTask.image.imagePath);
+		Task.remove({id: removeId}, function(err){
+			if(err){
+				console.log(err);
+			}
+			fs.unlink('./'+ removeTask.image.imagePath);
+			res.redirect('/');
+		});
 	});
-	Task.remove({id: removeId}, function(err){
-		//mus delete image in public folder
-		if(err){
-			console.log(err);
-		}
-		fs.unlink('./'+ removeTask.image.imagePath);
-		res.redirect('/');
-	})
+});
+
+app.get('/edit/:id' , function (req,res){
+	var editId = req.params.id;
+	res.render('editTask', {data: editId});
+});
+
+app.post('/edit/:id', urlencodedParser, function (req, res){
+	upload(req, res, function (err){
+		var imageData = req.file.path.slice(7);
+		Task.findOneAndUpdate({id: editId}, {
+			title: req.body.title,
+			description: req.body.description,
+			//var imagePath: req.file.path.slice(7);
+			image: {
+				data: imageData,
+				imagePath: req.file.path
+			}
+		}, {upsert:true} ,function (err, task){
+			if(err) {
+				console.log(err);
+			}
+			console.log(task);
+			res.redirect('/');
+		});
+	});
 });
 

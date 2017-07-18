@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Edit Task</title>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- jQuery library -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<!-- Latest compiled JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<div class="container" id="editTaskContent">
+			<h3>Edit Task</h3>
+			<form action="/edit/<%= data %>" method="post" enctype="multipart/form-data">
+				<label for="id">ID</label>
+				<input type="text" readonly="true" name="id" value="<%= data %>">
+				<label for="title">Title</label>
+				<input type="text" name="title" placeholder="Title" class="form-control">
+				<label for="description">Description</label>
+				<input type="text" name="description" placeholder="Description" class="form-control">
+				<label for="imageFile">Image</label>
+				<input type="file" name="imageFile">
+				<input type="submit" class="btn btn-primary btn-block" value="Edit">
+			</form>
+		</div>
+
+	</body>
+</html>
