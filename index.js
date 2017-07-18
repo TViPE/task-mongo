@@ -38,6 +38,7 @@ var taskSchema = mongoose.Schema({
 	description: String,
 	image: {
 		data: Buffer,
+		imagePath: String,
 		contentType: String
 	},
 	created_at: Date,
@@ -101,7 +102,7 @@ app.post('/upload', urlencodedParser, function(req, res){
 		// exclude 'public' keyword from image path because already use 
 		// 'public' as static 
 		var imagePath = req.file.path.slice(7);
-		console.log('imagePath' +  imagePath);
+		//console.log('imagePath' +  imagePath);
 
 		var aTask =  new Task({
 			id: id,
@@ -109,6 +110,7 @@ app.post('/upload', urlencodedParser, function(req, res){
 			description: description,
 			image: {
 				data: imagePath,
+				imagePath: req.file.path,
 				contentType: 'image/jpg'
 			}
 		});
@@ -124,11 +126,20 @@ app.post('/upload', urlencodedParser, function(req, res){
 
 app.get('/remove/:id', function (req,res){
 	var removeId = req.params.id;
+	var removeTask;
+	Task.findOne({id:removeId}, function(err, task){
+		if(err){
+			console.log(err);
+		}
+		removeTask = task;
+		console.log(removeTask.image.imagePath);
+	});
 	Task.remove({id: removeId}, function(err){
 		//mus delete image in public folder
 		if(err){
 			console.log(err);
 		}
+		fs.unlink('./'+ removeTask.image.imagePath);
 		res.redirect('/');
 	})
 });
