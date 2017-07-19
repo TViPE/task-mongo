@@ -126,8 +126,13 @@ app.get('/remove/:id', function (req,res){
 			if(err){
 				console.log(err);
 			}
-			fs.unlink('./'+ removeTask.image.imagePath);
-			res.redirect('/');
+			fs.unlink('./'+ removeTask.image.imagePath, function(err){
+				if(err) {
+					console.log(err);
+				} else {
+					res.redirect('/');
+				}
+			});	
 		});
 	});
 });
@@ -138,6 +143,7 @@ app.get('/edit/:id' , function (req,res){
 });
 
 app.post('/edit/:id', urlencodedParser, function (req, res){
+	var editId = req.params.id;
 	upload(req, res, function (err){
 		var imageData = req.file.path.slice(7);
 		Task.findOneAndUpdate({id: editId}, {
